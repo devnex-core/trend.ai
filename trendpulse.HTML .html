@@ -1,0 +1,635 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrendPulse 2026 -- Discover What's Trending Now</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #050505; color: #fff; overflow-x: hidden; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #262626; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #404040; }
+
+        .bg-glow {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;
+            background:
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.04) 0px, transparent 50%);
+        }
+
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card-hover { transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover {
+            border-color: rgba(249, 115, 22, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(249, 115, 22, 0.08);
+        }
+
+        .gradient-text {
+            background: linear-gradient(to bottom, #ffffff, #a3a3a3);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .accent-gradient {
+            background: linear-gradient(to right, #fed7aa, #fb923c, #f59e0b);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        .btn-primary { background: #ffffff; color: #000; transition: all 150ms; }
+        .btn-primary:hover { background: #e5e5e5; transform: scale(1.02); }
+        .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; transition: all 150ms; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+        .shine-effect { position: relative; overflow: hidden; }
+        .shine-effect::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.05) 45%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 55%, transparent 60%);
+            transform: translateX(-100%); transition: transform 700ms;
+        }
+        .shine-effect:hover::after { transform: translateX(100%); }
+
+        .pulse-dot { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 50% { opacity: 0.5; } }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeInUp 0.6s ease-out forwards; }
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+        .delay-4 { animation-delay: 0.4s; opacity: 0; }
+        .delay-5 { animation-delay: 0.5s; opacity: 0; }
+
+        .tag-trending { background: rgba(249,115,22,0.1); color: #fb923c; border: 1px solid rgba(249,115,22,0.2); }
+        .tag-new { background: rgba(168,85,247,0.1); color: #c084fc; border: 1px solid rgba(168,85,247,0.2); }
+        .tag-hot { background: rgba(236,72,153,0.1); color: #f472b6; border: 1px solid rgba(236,72,153,0.2); }
+        .tag-2026 { background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(168,85,247,0.15)); color: #fdba74; border: 1px solid rgba(249,115,22,0.25); }
+
+        .floating-cta { position: fixed; bottom: 24px; right: 24px; z-index: 50; animation: floatBounce 3s ease-in-out infinite; }
+        @keyframes floatBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+        .toast-container { position: fixed; top: 80px; right: 24px; z-index: 100; display: flex; flex-direction: column; gap: 8px; }
+        .toast { padding: 12px 20px; border-radius: 8px; font-size: 13px; animation: slideIn 0.4s ease-out, fadeOut 0.4s ease-in 2.6s forwards; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+
+        .marquee-track { display: flex; animation: marquee 35s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        .ad-link { text-decoration: none; color: inherit; display: block; }
+        .visitor-counter { font-variant-numeric: tabular-nums; }
+
+        .img-zoom { overflow: hidden; }
+        .img-zoom img { transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1); }
+        .img-zoom:hover img { transform: scale(1.08); }
+
+        .category-chip { transition: all 150ms; cursor: pointer; }
+        .category-chip:hover { background: rgba(255,255,255,0.1); }
+        .category-chip.active { background: rgba(249,115,22,0.15); border-color: rgba(249,115,22,0.3); color: #fb923c; }
+
+        .badge-2026 {
+            background: linear-gradient(135deg, #f97316, #a855f7);
+            color: #000; font-weight: 600; font-size: 10px;
+            padding: 3px 10px; border-radius: 999px; letter-spacing: 0.5px;
+        }
+
+        .countdown-bar {
+            height: 3px; background: linear-gradient(to right, #f97316, #a855f7, #ec4899);
+            border-radius: 3px; animation: shimmer 2s ease-in-out infinite;
+        }
+        @keyframes shimmer { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        .hero-overlay {
+            background: linear-gradient(to top, rgba(5,5,5,1) 0%, rgba(5,5,5,0.85) 25%, rgba(5,5,5,0.4) 50%, rgba(5,5,5,0.2) 70%, transparent 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Nav -->
+    <nav class="sticky top-0 z-50 glass-panel" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center">
+                    <iconify-icon icon="lucide:flame" width="18" style="color:#fff;"></iconify-icon>
+                </div>
+                <span class="text-lg font-medium tracking-tight">TrendPulse</span>
+                <span class="badge-2026">2026</span>
+                <span class="pulse-dot w-2 h-2 rounded-full bg-green-500 inline-block ml-1"></span>
+            </div>
+            <div class="hidden md:flex items-center gap-6 text-sm text-neutral-400">
+                <a href="#trending" class="hover:text-white transition-colors">Trending</a>
+                <a href="#discover" class="hover:text-white transition-colors">Discover</a>
+                <a href="#viral" class="hover:text-white transition-colors">Viral</a>
+                <a href="#today" class="hover:text-white transition-colors">Must Read</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 text-xs text-neutral-500">
+                    <span class="pulse-dot w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span>
+                    <span class="visitor-counter" id="visitorCount">18,432</span> online
+                </div>
+                <button onclick="handleNotifyClick()" class="btn-secondary text-xs font-medium px-4 py-2 rounded-lg flex items-center gap-2">
+                    <iconify-icon icon="lucide:bell" width="14"></iconify-icon> Notify Me
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Ticker -->
+    <div class="glass-panel border-b" style="border-color:rgba(255,255,255,0.03);overflow:hidden;">
+        <div class="max-w-7xl mx-auto flex items-center h-9">
+            <div class="flex-shrink-0 bg-orange-500/10 text-orange-400 text-[10px] font-medium px-3 py-1 mr-3 flex items-center gap-1.5 uppercase tracking-wider">
+                <iconify-icon icon="lucide:zap" width="12"></iconify-icon> Breaking 2026
+            </div>
+            <div class="overflow-hidden flex-1">
+                <div class="marquee-track">
+                    <div class="flex items-center gap-8 text-xs text-neutral-400 whitespace-nowrap pr-8">
+                        <span>🔥 AGI Breakthrough Confirmed: First True General AI Online</span><span>•</span>
+                        <span>📈 Quantum Finance: Markets Reach $500T Global Cap</span><span>•</span>
+                        <span>🚀 Mars Colony Alpha Reports First Birth on Red Planet</span><span>•</span>
+                        <span>🧬 Gene Therapy Eradicates Alzheimer's -- FDA Approved</span><span>•</span>
+                        <span>🎮 Neural Gaming: Play With Your Thoughts -- Launch Day</span><span>•</span>
+                        <span>🌊 Ocean Cities: First Floating Metropolis Opens in Pacific</span><span>•</span>
+                    </div>
+                    <div class="flex items-center gap-8 text-xs text-neutral-400 whitespace-nowrap pr-8">
+                        <span>🔥 AGI Breakthrough Confirmed: First True General AI Online</span><span>•</span>
+                        <span>📈 Quantum Finance: Markets Reach $500T Global Cap</span><span>•</span>
+                        <span>🚀 Mars Colony Alpha Reports First Birth on Red Planet</span><span>•</span>
+                        <span>🧬 Gene Therapy Eradicates Alzheimer's -- FDA Approved</span><span>•</span>
+                        <span>🎮 Neural Gaming: Play With Your Thoughts -- Launch Day</span><span>•</span>
+                        <span>🌊 Ocean Cities: First Floating Metropolis Opens in Pacific</span><span>•</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero with real image -->
+    <section class="relative z-10 pt-0 pb-0">
+        <a href="https://manyapostle.com/vvu0u229?key=ce6bb585879ccd6a6c01f89e4db0e31b" target="_blank" rel="noopener" class="ad-link block relative">
+            <div class="relative h-[70vh] md:h-[80vh] img-zoom">
+                <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1600&h=900&fit=crop&q=80" alt="Futuristic AI City 2026" class="w-full h-full object-cover">
+                <div class="hero-overlay absolute inset-0"></div>
+                <div class="absolute inset-0 flex flex-col items-center justify-end pb-16 md:pb-24 px-6 text-center">
+                    <div class="animate-in delay-1">
+                        <span class="tag-2026 text-[10px] font-medium px-3 py-1 rounded-full inline-flex items-center gap-1.5 mb-4">
+                            <iconify-icon icon="lucide:sparkles" width="12"></iconify-icon> 2026 EDITION -- LIVE
+                        </span>
+                    </div>
+                    <h1 class="text-3xl sm:text-5xl md:text-7xl font-semibold tracking-tight leading-[1.05] mb-5 animate-in delay-2 max-w-4xl">
+                        <span class="gradient-text">The Future Is Now:</span><br>
+                        <span class="accent-gradient">Stories Shaping 2026</span>
+                    </h1>
+                    <p class="text-neutral-300 text-sm md:text-lg font-light leading-relaxed max-w-2xl mb-8 animate-in delay-3">
+                        AI breakthroughs, space colonies, quantum leaps -- discover the trends defining our new reality.
+                    </p>
+                    <div class="flex items-center gap-3 animate-in delay-4">
+                        <span class="btn-primary text-sm font-medium px-6 py-3 rounded-lg inline-flex items-center gap-2">
+                            <iconify-icon icon="lucide:flame" width="16"></iconify-icon> Read Full Story
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-6 mt-6 text-[11px] text-neutral-500 animate-in delay-5">
+                        <span class="flex items-center gap-1"><iconify-icon icon="lucide:eye" width="12"></iconify-icon> 4.2M reading</span>
+                        <span class="flex items-center gap-1"><iconify-icon icon="lucide:clock" width="12"></iconify-icon> 3 min ago</span>
+                        <span class="flex items-center gap-1"><iconify-icon icon="lucide:message-circle" width="12"></iconify-icon> 18K comments</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </section>
+
+    <!-- Stats -->
+    <section class="relative z-10 px-6 py-10 border-b" style="border-color:rgba(255,255,255,0.05);">
+        <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="glass-panel rounded-lg p-4 text-center">
+                <div class="text-2xl font-medium">2.4M</div>
+                <div class="text-[11px] text-neutral-500 mt-1">Topics Tracked</div>
+            </div>
+            <div class="glass-panel rounded-lg p-4 text-center">
+                <div class="text-2xl font-medium text-orange-400" id="statLive">1,247</div>
+                <div class="text-[11px] text-neutral-500 mt-1">Live Trends</div>
+            </div>
+            <div class="glass-panel rounded-lg p-4 text-center">
+                <div class="text-2xl font-medium">195+</div>
+                <div class="text-[11px] text-neutral-500 mt-1">Countries</div>
+            </div>
+            <div class="glass-panel rounded-lg p-4 text-center">
+                <div class="text-2xl font-medium text-green-400">99.9%</div>
+                <div class="text-[11px] text-neutral-500 mt-1">Uptime</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Filter -->
+    <section class="relative z-10 px-6 py-8" id="trending">
+        <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto pb-2">
+            <button class="category-chip active glass-panel text-xs font-medium px-4 py-2 rounded-full whitespace-nowrap" onclick="filterCategory(this,'all')">
+                <iconify-icon icon="lucide:flame" width="12" class="mr-1"></iconify-icon> All Trending
+            </button>
+            <button class="category-chip glass-panel text-xs font-medium px-4 py-2 rounded-full whitespace-nowrap text-neutral-400" onclick="filterCategory(this,'tech')">
+                <iconify-icon icon="lucide:cpu" width="12" class="mr-1"></iconify-icon> AI & Tech
+            </button>
+            <button class="category-chip glass-panel text-xs font-medium px-4 py-2 rounded-full whitespace-nowrap text-neutral-400" onclick="filterCategory(this,'space')">
+                <iconify-icon icon="lucide:rocket" width="12" class="mr-1"></iconify-icon> Space
+            </button>
+            <button class="category-chip glass-panel text-xs font-medium px-4 py-2 rounded-full whitespace-nowrap text-neutral-400" onclick="filterCategory(this,'health')">
+                <iconify-icon icon="lucide:heart-pulse" width="12" class="mr-1"></iconify-icon> Health
+            </button>
+            <button class="category-chip glass-panel text-xs font-medium px-4 py-2 rounded-full whitespace-nowrap text-neutral-400" onclick="filterCategory(this,'gaming')">
+                <iconify-icon icon="lucide:gamepad-2" width="12" class="mr-1"></iconify-icon> Gaming
+            </button>
+            <button class="category-chip glass-panel text-xs font-medium px-4 py-2 rounded-full whitespace-nowrap text-neutral-400" onclick="filterCategory(this,'finance')">
+                <iconify-icon icon="lucide:trending-up" width="12" class="mr-1"></iconify-icon> Finance
+            </button>
+        </div>
+    </section>
+
+    <!-- Main Grid -->
+    <section class="relative z-10 px-6 pb-16" id="discover">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-5">
+
+            <!-- FEATURED: AI Robot -- Smartlink_4 -->
+            <a href="https://manyapostle.com/vvu0u229?key=ce6bb585879ccd6a6c01f89e4db0e31b" target="_blank" rel="noopener" class="ad-link md:col-span-2 card-hover shine-effect glass-panel rounded-xl overflow-hidden">
+                <div class="relative img-zoom">
+                    <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=900&h=500&fit=crop&q=80" alt="Humanoid AI Robot 2026" class="w-full h-64 md:h-80 object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                    <div class="absolute top-4 left-4 flex items-center gap-2">
+                        <span class="tag-hot text-[10px] font-medium px-2.5 py-1 rounded-full flex items-center gap-1"><iconify-icon icon="lucide:zap" width="10"></iconify-icon> VIRAL</span>
+                        <span class="badge-2026">2026</span>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-5 md:p-7">
+                        <div class="countdown-bar w-32 mb-3"></div>
+                        <h2 class="text-xl md:text-2xl font-semibold tracking-tight leading-tight mb-2">AGI Is Here: The First True Artificial General Intelligence Goes Live</h2>
+                        <p class="text-neutral-300 text-xs md:text-sm font-light line-clamp-2">After decades of research, the first AGI system has passed every human-level benchmark. Scientists call it the most transformative moment in history.</p>
+                        <div class="flex items-center gap-4 mt-3 text-[11px] text-neutral-500">
+                            <span class="flex items-center gap-1"><iconify-icon icon="lucide:eye" width="12"></iconify-icon> 4.2M</span>
+                            <span class="flex items-center gap-1"><iconify-icon icon="lucide:clock" width="12"></iconify-icon> 12 min ago</span>
+                            <span class="flex items-center gap-1"><iconify-icon icon="lucide:message-circle" width="12"></iconify-icon> 18K</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Side Stack -->
+            <div class="flex flex-col gap-5">
+                <!-- Crypto -- DirectLink_1 -->
+                <a href="https://manyapostle.com/gqcyvyfs?key=b8b84b886788b5632b6ec0c67232a6f8" target="_blank" rel="noopener" class="ad-link card-hover shine-effect glass-panel rounded-xl overflow-hidden flex-1">
+                    <div class="relative img-zoom">
+                        <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=500&h=350&fit=crop&q=80" alt="Cryptocurrency 2026" class="w-full h-44 object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
+                        <div class="absolute top-3 left-3"><span class="tag-trending text-[10px] font-medium px-2 py-0.5 rounded-full">🔥 TRENDING</span></div>
+                        <div class="absolute bottom-3 left-3 right-3">
+                            <h3 class="text-sm font-medium tracking-tight leading-snug">Quantum Finance: Global Markets Hit $500 Trillion</h3>
+                            <div class="flex items-center gap-3 mt-1.5 text-[10px] text-neutral-500"><span>1.8M views</span><span>25 min ago</span></div>
+                        </div>
+                    </div>
+                </a>
+                <!-- Space -- DirectLink_2 -->
+                <a href="https://manyapostle.com/bb74vunz1x?key=dd7e67c8f03a3e7b1b9553abece3f1a2" target="_blank" rel="noopener" class="ad-link card-hover shine-effect glass-panel rounded-xl overflow-hidden flex-1">
+                    <div class="relative img-zoom">
+                        <img src="https://images.unsplash.com/photo-1516849841032-87cbac4d88f9?w=500&h=350&fit=crop&q=80" alt="Rocket Launch Mars 2026" class="w-full h-44 object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
+                        <div class="absolute top-3 left-3"><span class="tag-new text-[10px] font-medium px-2 py-0.5 rounded-full">🚀 SPACE</span></div>
+                        <div class="absolute bottom-3 left-3 right-3">
+                            <h3 class="text-sm font-medium tracking-tight leading-snug">Mars Colony Alpha: First Human Born on Red Planet</h3>
+                            <div class="flex items-center gap-3 mt-1.5 text-[10px] text-neutral-500"><span>2.1M views</span><span>1 hr ago</span></div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3-Column Cards -->
+    <section class="relative z-10 px-6 pb-16" id="viral">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-5">
+            <!-- Quantum Chip -- DirectLink_3 -->
+            <a href="https://manyapostle.com/g9d79f6r?key=19f67ab4088f1f13a6021be8c17de66f" target="_blank" rel="noopener" class="ad-link card-hover shine-effect glass-panel rounded-xl overflow-hidden">
+                <div class="relative img-zoom">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&h=340&fit=crop&q=80" alt="Quantum Chip Close-up" class="w-full h-52 object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                    <div class="absolute top-3 left-3"><span class="tag-new text-[10px] font-medium px-2 py-0.5 rounded-full">⚡ BREAKTHROUGH</span></div>
+                    <div class="absolute bottom-3 left-3 right-3">
+                        <h3 class="text-sm font-semibold tracking-tight leading-snug">100,000 Qubit Quantum Chip Breaks Every Encryption Record</h3>
+                        <p class="text-neutral-400 text-[11px] font-light mt-1 line-clamp-2">The quantum era begins: new chips make today's cryptography obsolete overnight.</p>
+                        <div class="flex items-center gap-3 mt-2 text-[10px] text-neutral-500"><span>745K views</span><span>2 hrs ago</span></div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Climate Tech -- Smartlink_4 -->
+            <a href="https://manyapostle.com/vvu0u229?key=ce6bb585879ccd6a6c01f89e4db0e31b" target="_blank" rel="noopener" class="ad-link card-hover shine-effect glass-panel rounded-xl overflow-hidden">
+                <div class="relative img-zoom">
+                    <img src="https://images.unsplash.com/photo-1473341304170-971dccb96ac1?w=500&h=340&fit=crop&q=80" alt="Renewable Energy Wind Turbines" class="w-full h-52 object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                    <div class="absolute top-3 left-3"><span class="tag-trending text-[10px] font-medium px-2 py-0.5 rounded-full">🌍 IMPACT</span></div>
+                    <div class="absolute bottom-3 left-3 right-3">
+                        <h3 class="text-sm font-semibold tracking-tight leading-snug">Carbon Capture Reverses Climate Change: CO2 Back to 350ppm</h3>
+                        <p class="text-neutral-400 text-[11px] font-light mt-1 line-clamp-2">Massive atmospheric scrubbers bring CO2 levels below critical thresholds for the first time since 1988.</p>
+                        <div class="flex items-center gap-3 mt-2 text-[10px] text-neutral-500"><span>920K views</span><span>3 hrs ago</span></div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Neural Gaming -- DirectLink_1 -->
+            <a href="https://manyapostle.com/gqcyvyfs?key=b8b84b886788b5632b6ec0c67232a6f8" target="_blank" rel="noopener" class="ad-link card-hover shine-effect glass-panel rounded-xl overflow-hidden">
+                <div class="relative img-zoom">
+                    <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=500&h=340&fit=crop&q=80" alt="Neural Gaming VR 2026" class="w-full h-52 object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                    <div class="absolute top-3 left-3"><span class="tag-hot text-[10px] font-medium px-2 py-0.5 rounded-full">🎮 GAMING</span></div>
+                    <div class="absolute bottom-3 left-3 right-3">
+                        <h3 class="text-sm font-semibold tracking-tight leading-snug">Neural Gaming Launches: Play Entirely With Your Thoughts</h3>
+                        <p class="text-neutral-400 text-[11px] font-light mt-1 line-clamp-2">Brain-computer interfaces make controllers obsolete. The first neural MMO goes live.</p>
+                        <div class="flex items-center gap-3 mt-2 text-[10px] text-neutral-500"><span>1.3M views</span><span>4 hrs ago</span></div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Must Read -->
+    <section class="relative z-10 px-6 pb-16" id="today">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-medium tracking-tight flex items-center gap-2">
+                    <iconify-icon icon="lucide:bookmark" width="20" class="text-orange-400"></iconify-icon> Must Read Today
+                </h2>
+                <span class="badge-2026">2026</span>
+            </div>
+            <div class="grid md:grid-cols-2 gap-4">
+                <!-- Gene Therapy -- DirectLink_2 -->
+                <a href="https://manyapostle.com/bb74vunz1x?key=dd7e67c8f03a3e7b1b9553abece3f1a2" target="_blank" rel="noopener" class="ad-link card-hover shine-effect glass-panel rounded-xl p-4 flex items-start gap-4">
+                    <img src="https://images.unsplash.com/photo-1559757175-5700dde675bc?w=200&h=200&fit=crop&q=80" alt="DNA Gene Therapy" class="w-24 h-24 rounded-lg object-cover flex-shrink-0">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="tag-hot text-[9px] font-medium px-2 py-0.5 rounded-full">HEALTH</span>
+                            <span class="text-[10px] text-neutral-500">5 hrs ago</span>
+                        </div>
+                        <h3 class="text-sm font-medium tracking-tight leading-snug mb-1.5">Gene Therapy Eradicates Alzheimer's -- FDA Grants Full Approval</h3>
+                        <p class="text-neutral-500 text-[11px] font-light line-clamp-2">A single injection now permanently reverses Alzheimer's disease in patients of all ages.</p>
+                        <div class="flex items-center gap-3 mt-2 text-[10px] text-neutral-600">
+                            <span class="flex items-center gap-1"><iconify-icon icon="lucide:eye" width="10"></iconify-icon> 2.1M</span>
+                            <span class="flex items-center gap-1"><iconify-icon icon="lucide:share-2" width="10"></iconify-icon> 34K</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Ocean City -- DirectLink_3 -->
+                <a href="https://manyapostle.com/g9d79f6r?key=19f67ab4088f1f13a6021be8c17de66f" target="_blank" rel="noopener" class="ad-link card-hover shine-effect glass-panel rounded-xl p-4 flex items-start gap-4">
+                    <img src="https://images.unsplash.com/photo-1559825481-12a05cc00344?w=200&h=200&fit=crop&q=80" alt="Underwater Ocean City" class="w-24 h-24 rounded-lg object-cover flex-shrink-0">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="tag-new text-[9px] font-medium px-2 py-0.5 rounded-full">WORLD</span>
+                            <span class="text-[10px] text-neutral-500">6 hrs ago</span>
+                        </div>
+                        <h3 class="text-sm font-medium tracking-tight leading-snug mb-1.5">Pacific Floating City Opens: 50,000 Residents Move In</h3>
+                        <p class="text-neutral-500 text-[11px] font-light line-clamp-2">The world's first sovereign ocean metropolis welcomes its first citizens in the South Pacific.</p>
+                        <div class="flex items-center gap-3 mt-2 text-[10px] text-neutral-600">
+                            <span class="flex items-center gap-1"><iconify-icon icon="lucide:eye" width="10"></iconify-icon> 890K</span>
+                            <span class="flex items-center gap-1"><iconify-icon icon="lucide:share-2" width="10"></iconify-icon> 22K</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Robot Companion -- Smartlink_4 -->
+                <a href="https://manyapostle.com/vvu0u229?key=ce6bb585879ccd6a6c01f89e4db0e31b" target="_blank" rel="noopener" class="ad-link card-hover shine-effect glass-panel rounded-xl p-4 flex items-start gap-4">
+                    <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=200&h=200&fit=crop&q=80" alt="Robot Dog Companion" class="w-24 h-24 rounded-lg object-cover flex-shrink-0">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="tag-trending text-[9px] font-medium px-2 py-0.5 rounded-full">ROBOTICS</span>
+                            <span class="text-[10px] text-neutral-500">7 hrs ago</span>
+                        </div>
+                        <h3 class="text-sm font-medium tracking-tight leading-snug mb-1.5">Robot Companions Now in 40% of U.S. Households</h3>
+                        <p class="text-neutral-500 text-[11px] font-light line-clamp-2">Affordable AI companions transform daily life -- from elder care to household management.</p>
+                        <div class="flex items-center gap-3 mt-2 text-[10px] text-neutral-600">
+                            <span class="flex items-center gap-1"><iconify-icon icon="lucide:eye" width="10"></iconify-icon> 1.5M</span>
+                            <span class="flex items-center gap-1"><iconify-icon icon="lucide:share-2" width="10"></iconify-icon> 45K</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Fusion Energy -- DirectLink_1 -->
+                <a href="https://manyapostle.com/gqcyvyfs?key=b8b84b886788b5632b6ec0c67232a6f8" target="_blank" rel="noopener" class="ad-link card-hover shine-effect glass-panel rounded-xl p-4 flex items-start gap-4">
+                    <img src="https://images.unsplash.com/photo-1473341304170-971dccb96ac1?w=200&h=200&fit=crop&q=80" alt="Fusion Reactor Energy" class="w-24 h-24 rounded-lg object-cover flex-shrink-0">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="tag-trending text-[9px] font-medium px-2 py-0.5 rounded-full">ENERGY</span>
+                            <span class="text-[10px] text-neutral-500">8 hrs ago</span>
+                        </div>
+                        <h3 class="text-sm font-medium tracking-tight leading-snug mb-1.5">Fusion Energy Powers 10% of Earth -- Unlimited Clean Energy</h3>
+                        <p class="text-neutral-500 text-[11px] font-light line-clamp-2">Commercial fusion reactors now operational on every continent, ending the fossil fuel era.</p>
+                        <div class="flex items-center gap-3 mt-2 text-[10px] text-neutral-600">
+                            <span class="flex items-center gap-1"><iconify-icon icon="lucide:eye" width="10"></iconify-icon> 3.2M</span>
+                            <span class="flex items-center gap-1"><iconify-icon icon="lucide:share-2" width="10"></iconify-icon> 67K</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hashtags Section -->
+    <section class="relative z-10 px-6 pb-16">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-medium tracking-tight flex items-center gap-2">
+                    <iconify-icon icon="lucide:hash" width="20" class="text-orange-400"></iconify-icon> Top Hashtags 2026
+                </h2>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <a href="https://manyapostle.com/vvu0u229?key=ce6bb585879ccd6a6c01f89e4db0e31b" target="_blank" rel="noopener" class="ad-link card-hover glass-panel rounded-lg p-5 text-center">
+                    <div class="text-orange-400 text-lg font-semibold mb-1">#AGI2026</div>
+                    <div class="text-neutral-500 text-[10px]">8.2M posts • #1 Worldwide</div>
+                    <div class="mt-3 h-1.5 bg-neutral-800 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-orange-500 to-amber-400 rounded-full" style="width:97%"></div></div>
+                </a>
+                <a href="https://manyapostle.com/g9d79f6r?key=19f67ab4088f1f13a6021be8c17de66f" target="_blank" rel="noopener" class="ad-link card-hover glass-panel rounded-lg p-5 text-center">
+                    <div class="text-purple-400 text-lg font-semibold mb-1">#MarsBirth</div>
+                    <div class="text-neutral-500 text-[10px]">5.9M posts • #2 Worldwide</div>
+                    <div class="mt-3 h-1.5 bg-neutral-800 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full" style="width:88%"></div></div>
+                </a>
+                <a href="https://manyapostle.com/bb74vunz1x?key=dd7e67c8f03a3e7b1b9553abece3f1a2" target="_blank" rel="noopener" class="ad-link card-hover glass-panel rounded-lg p-5 text-center">
+                    <div class="text-pink-400 text-lg font-semibold mb-1">#NeuralGaming</div>
+                    <div class="text-neutral-500 text-[10px]">4.1M posts • #3 Worldwide</div>
+                    <div class="mt-3 h-1.5 bg-neutral-800 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-pink-500 to-rose-500 rounded-full" style="width:76%"></div></div>
+                </a>
+                <a href="https://manyapostle.com/gqcyvyfs?key=b8b84b886788b5632b6ec0c67232a6f8" target="_blank" rel="noopener" class="ad-link card-hover glass-panel rounded-lg p-5 text-center">
+                    <div class="text-blue-400 text-lg font-semibold mb-1">#FusionAge</div>
+                    <div class="text-neutral-500 text-[10px]">3.6M posts • #4 Worldwide</div>
+                    <div class="mt-3 h-1.5 bg-neutral-800 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full" style="width:68%"></div></div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter CTA -->
+    <section class="relative z-10 px-6 pb-16">
+        <div class="max-w-7xl mx-auto">
+            <div class="glass-panel rounded-2xl overflow-hidden relative">
+                <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&h=400&fit=crop&q=80" alt="Earth from Space" class="w-full h-48 md:h-56 object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent"></div>
+                <div class="relative z-10 p-8 md:p-12 text-center" style="margin-top:-80px;">
+                    <span class="badge-2026 mb-4 inline-block">2026 Edition</span>
+                    <h2 class="text-2xl md:text-3xl font-medium tracking-tight gradient-text mb-3">Never Miss A Trend</h2>
+                    <p class="text-neutral-400 text-sm font-light max-w-md mx-auto mb-6">Join 150,000+ readers who get the top 2026 stories delivered every morning.</p>
+                    <div class="flex items-center justify-center gap-2 max-w-md mx-auto">
+                        <input type="email" id="emailInput" placeholder="Enter your email" class="flex-1 bg-black/60 border border-neutral-800 rounded-lg px-4 py-3 text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-orange-500/50 transition-colors">
+                        <button onclick="handleSubscribe()" class="btn-primary text-sm font-medium px-6 py-3 rounded-lg flex items-center gap-2 whitespace-nowrap">
+                            <iconify-icon icon="lucide:send" width="14"></iconify-icon> Subscribe
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative z-10 border-t" style="border-color:rgba(255,255,255,0.05);">
+        <div class="max-w-7xl mx-auto px-6 py-12">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-6 h-6 rounded bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center">
+                            <iconify-icon icon="lucide:flame" width="14" style="color:#fff;"></iconify-icon>
+                        </div>
+                        <span class="text-sm font-medium">TrendPulse</span>
+                        <span class="badge-2026 text-[8px]">2026</span>
+                    </div>
+                    <p class="text-neutral-500 text-xs font-light leading-relaxed">Real-time trending topics and viral stories from around the world.</p>
+                </div>
+                <div>
+                    <h4 class="text-xs font-medium text-neutral-400 uppercase tracking-wider mb-3">Explore</h4>
+                    <div class="flex flex-col gap-2">
+                        <a href="#trending" class="text-xs text-neutral-500 hover:text-white transition-colors">Trending</a>
+                        <a href="#discover" class="text-xs text-neutral-500 hover:text-white transition-colors">Discover</a>
+                        <a href="#viral" class="text-xs text-neutral-500 hover:text-white transition-colors">Viral</a>
+                        <a href="#today" class="text-xs text-neutral-500 hover:text-white transition-colors">Must Read</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-xs font-medium text-neutral-400 uppercase tracking-wider mb-3">Categories</h4>
+                    <div class="flex flex-col gap-2">
+                        <span class="text-xs text-neutral-500">AI & Tech</span>
+                        <span class="text-xs text-neutral-500">Space</span>
+                        <span class="text-xs text-neutral-500">Health</span>
+                        <span class="text-xs text-neutral-500">Gaming</span>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-xs font-medium text-neutral-400 uppercase tracking-wider mb-3">Connect</h4>
+                    <div class="flex items-center gap-3">
+                        <a href="#" class="text-neutral-500 hover:text-white transition-colors"><iconify-icon icon="lucide:twitter" width="18"></iconify-icon></a>
+                        <a href="#" class="text-neutral-500 hover:text-white transition-colors"><iconify-icon icon="lucide:github" width="18"></iconify-icon></a>
+                        <a href="#" class="text-neutral-500 hover:text-white transition-colors"><iconify-icon icon="lucide:mail" width="18"></iconify-icon></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t pt-6 flex flex-col md:flex-row items-center justify-between gap-4" style="border-color:rgba(255,255,255,0.05);">
+                <p class="text-[11px] text-neutral-600">© 2026 TrendPulse. All rights reserved.</p>
+                <div class="flex items-center gap-4 text-[11px] text-neutral-600">
+                    <span>Privacy Policy</span><span>Terms of Service</span><span>Disclaimer</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating CTA -->
+    <div class="floating-cta">
+        <a href="https://manyapostle.com/vvu0u229?key=ce6bb585879ccd6a6c01f89e4db0e31b" target="_blank" rel="noopener" class="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-purple-600 text-white text-xs font-semibold px-5 py-3 rounded-full shadow-lg shadow-orange-500/20 hover:shadow-purple-500/30 transition-shadow">
+            <iconify-icon icon="lucide:flame" width="16"></iconify-icon> Top Trending
+        </a>
+    </div>
+
+    <script>
+        // Visitor counter
+        function updateVisitorCount() {
+            const el = document.getElementById('visitorCount');
+            const base = 18432;
+            const v = Math.floor(Math.random() * 600) - 300;
+            el.textContent = (base + v).toLocaleString();
+        }
+        setInterval(updateVisitorCount, 4000);
+
+        // Toast
+        function showToast(msg, type = 'info') {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            const bg = type === 'success' ? 'rgba(34,197,94,0.15)' : 'rgba(249,115,22,0.15)';
+            const bc = type === 'success' ? 'rgba(34,197,94,0.3)' : 'rgba(249,115,22,0.3)';
+            const tc = type === 'success' ? '#4ade80' : '#fb923c';
+            t.className = 'toast';
+            t.style.cssText = `background:${bg};border:1px solid ${bc};color:${tc};`;
+            t.innerHTML = msg;
+            c.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        // Trending alerts
+        const alerts = [
+            '🔥 AGI is trending #1 in 195 countries',
+            '🚀 Mars Colony story goes viral worldwide',
+            '⚡ Quantum Chip breakthrough: 2M reads in 1 hour',
+            '🎮 Neural Gaming launch crashes servers',
+            '🧬 Alzheimer\'s cure story: most shared of 2026',
+        ];
+        let ai = 0;
+        function showAlert() { showToast(alerts[ai % alerts.length]); ai++; }
+        setTimeout(showAlert, 7000);
+        setInterval(showAlert, 18000);
+
+        // Category filter
+        function filterCategory(btn, cat) {
+            document.querySelectorAll('.category-chip').forEach(c => { c.classList.remove('active'); c.classList.add('text-neutral-400'); });
+            btn.classList.add('active'); btn.classList.remove('text-neutral-400');
+            showToast(`<iconify-icon icon="lucide:filter" width="12" style="vertical-align:-2px"></iconify-icon> Showing ${cat === 'all' ? 'all trending' : cat} topics`);
+        }
+
+        // Notify
+        function handleNotifyClick() { showToast('🔔 Notifications enabled!', 'success'); }
+
+        // Subscribe
+        function handleSubscribe() {
+            const e = document.getElementById('emailInput').value;
+            if (e && e.includes('@')) { showToast('✅ Welcome! Check your inbox.', 'success'); document.getElementById('emailInput').value = ''; }
+            else { showToast('⚠️ Please enter a valid email.'); }
+        }
+
+        // Scroll reveal
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.style.opacity = '1'; entry.target.style.transform = 'translateY(0)'; } });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.card-hover, .glass-panel').forEach(el => {
+            if (!el.closest('.sticky') && !el.closest('nav') && !el.closest('.toast-container')) {
+                el.style.opacity = '0'; el.style.transform = 'translateY(15px)';
+                el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out, border-color 0.3s, box-shadow 0.3s';
+                obs.observe(el);
+            }
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', function(e) {
+                const h = this.getAttribute('href'); if (h !== '#') { e.preventDefault(); const t = document.querySelector(h); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+            });
+        });
+
+        // Stats update
+        function updateStats() {
+            const s = document.getElementById('statLive');
+            s.textContent = (1247 + Math.floor(Math.random() * 80) - 40).toLocaleString();
+        }
+        setInterval(updateStats, 7000);
+    </script>
+</body>
+</html>
